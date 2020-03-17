@@ -48,7 +48,7 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	summary := ""
 	if country {
 		err = json.Unmarshal([]byte(body), &countryResponse)
-		summary = fmt.Sprintf("COVID-19 cases for %s: cases %d, deaths: %d, recovered: %d", countryResponse.Country, countryResponse.Cases, countryResponse.Deaths, countryResponse.Recovered)
+		summary = fmt.Sprintf("COVID-19 cases for %s: cases %d, deaths: %d, recovered: %d, critival %s, cases today %d, deaths today %d", countryResponse.Country, countryResponse.Cases, countryResponse.Deaths, countryResponse.Recovered, countryResponse.Critical, countryResponse.TodayCases, countryResponse.TodayDeaths)
 	} else {
 		err = json.Unmarshal([]byte(body), &response)
 		summary = fmt.Sprintf("World wide COVID-19 cases %d, deaths: %d, recovered: %d", response.Cases, response.Deaths, response.Recovered)
