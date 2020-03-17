@@ -55,7 +55,16 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		log.Printf("failed to unmarshal body: %v", err)
-		replies = append(replies, generateTextMessage(types.RequestErrorMessage, 0))
+		var ereplies []interface{}
+		ereplies = append(ereplies, generateTextMessage(types.RequestErrorMessage, 0))
+		output, err := json.Marshal(types.Replies{Replies: ereplies})
+		if err != nil {
+			log.Printf("failed to marshal replies: %+v\n", err)
+			panic("something went wrong here with marshalling")
+		}
+		w.Header().Set("content-type", "application/json")
+		w.Write(output)
+		return
 	}
 
 	replies = append(replies, generateTextMessage(summary, 0))
@@ -79,8 +88,8 @@ func getenv(key, fallback string) string {
 
 func generateTextMessage(text string, delay int) types.TextMessage {
 	return types.TextMessage{
-		Type:    types.ButtonsType,
+		Type:    types.TextType,
 		Content: text,
-		Delay:   delay,
+		Delay: 	 delay,
 	}
 }
