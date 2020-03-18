@@ -28,11 +28,11 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("setting url to: %s", url)
 
-
 	res, err := http.Get(url)
 	if err != nil {
 		log.Printf("failed to get url %s: %v", url, err)
 		replies = append(replies, generateTextMessage(types.RequestErrorMessage, 0))
+		returnWithReply(w, replies)
 	}
 
 	defer res.Body.Close()
@@ -40,6 +40,7 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	if readErr != nil {
 		log.Printf("failed to read body: %v", err)
 		replies = append(replies, generateTextMessage(types.RequestErrorMessage, 0))
+		returnWithReply(w, replies)
 	}
 
 	response := types.Response{}
@@ -55,20 +56,15 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		log.Printf("failed to unmarshal body: %v", err)
-		var ereplies []interface{}
-		ereplies = append(ereplies, generateTextMessage(types.RequestErrorMessage, 0))
-		output, err := json.Marshal(types.Replies{Replies: ereplies})
-		if err != nil {
-			log.Printf("failed to marshal replies: %+v\n", err)
-			panic("something went wrong here with marshalling")
-		}
-		w.Header().Set("content-type", "application/json")
-		w.Write(output)
-		return
+		replies = append(replies, generateTextMessage(types.RequestErrorMessage, 0))
+		returnWithReply(w, replies)
 	}
 
 	replies = append(replies, generateTextMessage(summary, 0))
+	returnWithReply(w, replies)
+}
 
+func returnWithReply(w http.ResponseWriter, replies []interface{}) {
 	output, err := json.Marshal(types.Replies{Replies: replies})
 	if err != nil {
 		log.Printf("failed to marshal replies: %+v\n", err)
@@ -76,6 +72,7 @@ func Cases(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("content-type", "application/json")
 	w.Write(output)
+	return
 }
 
 func getenv(key, fallback string) string {
