@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	covidAPIAll     = "https://corona.lmao.ninja/all"
-	covidAPICountry = "https://corona.lmao.ninja/countries"
+	covidAPIAll     = "https://corona.lmao.ninja/v2/all"
+	covidAPICountry = "https://corona.lmao.ninja/v2/countries"
 )
 
 // Cases returns the COVID-19 cases for a given country name.
